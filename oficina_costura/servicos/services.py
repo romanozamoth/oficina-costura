@@ -7,6 +7,20 @@ def iniciar_os(ordem: OrdemServico):
 
     ordem.status = OrdemServico.Status.EM_ANDAMENTO
     ordem.save()
+    
+def retornar_inicio_os(ordem: OrdemServico):
+    if ordem.status != OrdemServico.Status.EM_ANDAMENTO:
+        raise ValueError("A ordem não está em andamento")
+
+    ordem.status = OrdemServico.Status.ABERTO
+    ordem.save()
+    
+def retornar_andamento_os(ordem: OrdemServico):
+    if ordem.status != OrdemServico.Status.FINALIZADO:
+        raise ValueError("A ordem não está finalizada")
+
+    ordem.status = OrdemServico.Status.EM_ANDAMENTO
+    ordem.save()
 
 def finalizar_os(ordem: OrdemServico):
     if ordem.status == OrdemServico.Status.FINALIZADO:

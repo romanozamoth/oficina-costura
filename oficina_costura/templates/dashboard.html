@@ -1,113 +1,231 @@
-{% extends "base.html" %}
-
-{% block content_title %}
+{% extends "base.html" %} {% block content_title %}
 <h1>📊 Dashboard - Ordens de Serviço</h1>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 
 <div class="finance-row">
-    <div class="status-card" style="background:#640000">
-        🔴 Abertas<br>{{ abertas }}
-    </div>
-    
-    <div class="status-card" style="background:#085f00">
-        🟢 Finalizadas<br>{{ finalizadas }}
-    </div>
-    
-</div> <br>
-<div class="finance-row">
-<div class="status-card" style="background:#7c7400">
-        🟡 Em andamento<br>{{ andamento }}
-    </div>
-    <div class="status-card" style="background:#5c007a">
-        📅 Hoje<br>{{ finalizadas_hoje }}
-    </div>
-    </div>
+  <div class="status-card" style="background: #640000">
+    🔴 Abertas<br />{{ abertas }}
+  </div>
 
-<br>
+  <div class="status-card" style="background: #085f00">
+    🟢 Finalizadas<br />{{ finalizadas }}
+  </div>
+</div>
+<br />
+<div class="finance-row">
+  <div class="status-card" style="background: #7c7400">
+    🟡 Em andamento<br />{{ andamento }}
+  </div>
+  <div class="status-card" style="background: #5c007a">
+    📅 Hoje<br />{{ finalizadas_hoje }}
+  </div>
+</div>
+
+<br />
 <h2>Resumo Financeiro</h2>
 
 <!-- Card mensal sozinho -->
 <div class="finance-top">
-    <div class="card destaque">
-        <h3>📅 Faturamento Mensal</h3>
-        <p>R$ {{ faturamento_mensal }}</p>
+  <div class="card destaque">
+    <h3>
+      📅 Faturamento Mensal
+      <span class="eye" onclick="toggleValor(this)">👁</span>
+    </h3>
+    <p class="valor" data-valor="R$ {{ faturamento_mensal }}">••••••</p>
+
+    <h3 style="cursor: pointer" onclick="toggleGrafico()" id="tituloGrafico">
+      📈 Faturamento por Mês (ver detalhes)
+    </h3>
+
+    <div id="graficoContainer" class="grafico-oculto">
+      <div class="card" style="background: #fff; color: #000">
+        <canvas id="graficoMensal"></canvas>
+      </div>
     </div>
+    <p />
+  </div>
 </div>
 
 <!-- Cards lado a lado -->
 <div class="finance-row">
-    <div class="card warning">
-        <h3>⏳ Em aberto</h3>
-        <p>R$ {{ faturamento_aberto }}</p>
-    </div>
+  <div class="card warning">
+    <h3>
+      ⏳ Em aberto
+      <span class="eye" onclick="toggleValor(this)">👁</span>
+    </h3>
 
-    <div class="card success">
-        <h3>💰 Faturado Total</h3>
-        <p>R$ {{ faturamento_total }}</p>
-    </div>
+    <p class="valor" data-valor="R$ {{ faturamento_aberto }}">••••••</p>
+  </div>
+
+  <div class="card success">
+    <h3>
+      💰 Faturado Total
+      <span class="eye" onclick="toggleValor(this)">👁</span>
+    </h3>
+
+    <p class="valor" data-valor="R$ {{ faturamento_total }}">••••••</p>
+  </div>
 </div>
 
+<br />
 {{ block.super }}
 <style>
-/* Layout */
-.finance-top {
+  /* Layout */
+  .finance-top {
     margin-bottom: 20px;
-}
+  }
 
-.finance-row {
+  .finance-row {
     display: flex;
     gap: 20px;
-}
+  }
 
-/* Cards */
-.card {
+  /* Cards */
+  .card {
     flex: 1;
     padding: 20px;
     border-radius: 10px;
     color: #fff;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-}
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  }
 
-.card h3 {
+  .card h3 {
     margin-bottom: 10px;
     font-size: 18px;
-}
+  }
 
-.card p {
+  .card p {
     font-size: 28px;
     font-weight: bold;
-}
+  }
 
-/* Cores */
-.card.destaque {
+  /* Cores */
+  .card.destaque {
     background: linear-gradient(135deg, #6a11cb, #2575fc);
-}
+  }
 
-.card.warning {
+  .card.warning {
     background: linear-gradient(135deg, #f7971e, #ffd200);
     color: #000;
-}
+  }
 
-.card.success {
+  .card.success {
     background: linear-gradient(135deg, #11998e, #38ef7d);
-}
+  }
 
-/* Status cards do topo */
-.status-row {
+  /* Status cards do topo */
+  .status-row {
     display: flex;
     gap: 20px;
     margin-bottom: 25px;
-}
+  }
 
-.status-card {
+  .status-card {
     flex: 1;
     padding: 15px;
     border-radius: 8px;
     color: #fff;
     font-weight: bold;
     text-align: center;
-}
+  }
+
+  .eye {
+    cursor: pointer;
+    margin-left: 8px;
+    font-size: 16px;
+  }
+
+  .grafico-oculto {
+    max-height: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.5s ease,
+      opacity 0.4s ease;
+    opacity: 0;
+  }
+
+  .grafico-visivel {
+    max-height: 500px; /* altura suficiente pro gráfico */
+    opacity: 1;
+  }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<script>
+    function toggleGrafico() {
+      const container = document.getElementById("graficoContainer");
+      const titulo = document.getElementById("tituloGrafico");
+
+      if (container.classList.contains("grafico-oculto")) {
+          container.classList.remove("grafico-oculto");
+          container.classList.add("grafico-visivel");
+          titulo.innerHTML = "📉 Faturamento por Mês (ocultar detalhes)";
+      } else {
+          container.classList.remove("grafico-visivel");
+          container.classList.add("grafico-oculto");
+          titulo.innerHTML = "📈 Faturamento por Mês (ver detalhes)";
+      }
+  }
+    function toggleValor(icone) {
+      const card = icone.closest(".card");
+      const valorEl = card.querySelector(".valor");
+
+      if (valorEl.textContent === "••••••") {
+        valorEl.textContent = valorEl.dataset.valor;
+        icone.textContent = "🙈"; // ícone fechado
+      } else {
+        valorEl.textContent = "••••••";
+        icone.textContent = "👁"; // ícone aberto
+      }
+    }
+
+    const meses = {{ meses|safe }};
+    const valores = {{ valores|safe }};
+
+    const ctx = document.getElementById('graficoMensal').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: meses,
+            datasets: [{
+                label: 'Faturamento R$',
+                data: valores,
+                borderWidth: 1
+            }]
+        },
+        plugins: [ChartDataLabels], // 👈 ativa o plugin
+        options: {
+            responsive: true,
+            layout: {
+              padding: {
+                  top: 30
+              }
+          },
+            plugins: {
+                legend: { display: false },
+
+                // 🔥 MOSTRAR VALOR EM CIMA DA BARRA
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: function(value) {
+                        return 'R$ ' + value.toLocaleString('pt-BR', {
+                            minimumFractionDigits: 2
+                        });
+                    },
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

@@ -8,6 +8,8 @@ urlpatterns = [
 
     path('<int:os_id>/iniciar/', views.iniciar_ordem, name='servicos_iniciar'),
     path('<int:os_id>/finalizar/', views.finalizar_ordem, name='servicos_finalizar'),
+    path('<int:os_id>/retini/', views.retornar_ini_ordem, name='retornar_inicio_os'),
+    path('<int:os_id>/retanda/', views.retornar_anda_ordem, name='retornar_andamento_os'),
     path('servicos/<int:os_id>/excluir/', views.servicos_excluir, name='servicos_excluir'),
     
     path('<int:os_id>/pecas/nova/', views.adicionar_peca_os, name='adicionar_peca_os'),

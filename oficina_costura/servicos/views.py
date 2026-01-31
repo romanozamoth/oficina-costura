@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from .models import ComentarioOS, OrdemServico, PecaOS, ImagemComentarioOS
 from .forms import OrdemServicoForm, ComentarioOSForm, OrdemServicoValorForm, PecaOSForm
-from .services import iniciar_os, finalizar_os
+from .services import iniciar_os, finalizar_os, retornar_inicio_os, retornar_andamento_os
 
 def kanban_servicos(request):
     q = request.GET.get('q', '').strip()
@@ -89,6 +89,16 @@ def servicos_detalhe(request, os_id):
 def iniciar_ordem(request, os_id):
     ordem = get_object_or_404(OrdemServico, id=os_id)
     iniciar_os(ordem)
+    return redirect('servicos_kanban')
+
+def retornar_ini_ordem(request, os_id):
+    ordem = get_object_or_404(OrdemServico, id=os_id)
+    retornar_inicio_os(ordem)
+    return redirect('servicos_kanban')
+
+def retornar_anda_ordem(request, os_id):
+    ordem = get_object_or_404(OrdemServico, id=os_id)
+    retornar_andamento_os(ordem)
     return redirect('servicos_kanban')
 
 def finalizar_ordem(request, os_id):
