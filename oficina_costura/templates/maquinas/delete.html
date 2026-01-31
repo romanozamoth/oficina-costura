@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Remover Máquina</h2>
+
+<p>Tem certeza que deseja remover <strong>{{ maquina.modelo }}</strong>?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Confirmar</button>
+</form>
+
+<a href="{% url 'maquinas_listar' %}">Cancelar</a>
+{% endblock %}

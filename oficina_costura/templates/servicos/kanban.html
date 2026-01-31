@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Central de Serviços</h1>
+
+<a href="{% url 'servicos_criar' %}">➕ Nova OS</a>
+
+<hr>
+<form method="get" class="kanban-filtro">
+    <div class="filtro-input">
+        <label>Buscar cliente ou máquina</label>
+        <input
+            type="text"
+            name="q"
+            id="kanban-search"
+            value="{{ q }}"
+            placeholder="Digite cliente, telefone ou máquina"
+            autocomplete="off"
+        >
+        <div id="autocomplete-kanban" class="autocomplete-box"></div>
+    </div>
+
+    <button type="submit">🔍</button>
+
+    {% if q %}
+        <a href="{% url 'servicos_kanban' %}" class="limpar-filtro">✖ Limpar</a>
+    {% endif %}
+</form>
+
+<div style="display:flex; gap:40px; align-items:flex-start">
+
+    <!-- ABERTOS -->
+    <div style="width:30%">
+        <h4>🟥 Abertos</h4>
+
+        {% for os in abertos %}
+            <div style="border:1px solid #444; padding:10px; margin-bottom:10px">
+                <strong>OS #{{ os.id }}</strong><br>
+                Máquina: {{ os.maquina.modelo }}<br>
+                Cliente: {{ os.maquina.cliente.nome }}<br>
+                Descrição: {{ os.descricao_problema }}<br>
+
+                <a href="{% url 'servicos_detalhe' os.id %}">👁 Ver</a> |
+                <a href="{% url 'servicos_iniciar' os.id %}">▶ Iniciar</a> |
+                <a href="{% url 'servicos_excluir' os.id %}" class="btn-delete">🗑 Excluir</a>
+            </div>
+        {% empty %}
+            <p>Nenhuma OS aberta</p>
+        {% endfor %}
+    </div>
+
+    <!-- EM ANDAMENTO -->
+    <div style="width:30%">
+        <h4>🟨 Em andamento</h4>
+
+        {% for os in andamento %}
+            <div style="border:1px solid #444; padding:10px; margin-bottom:10px">
+                <strong>OS #{{ os.id }}</strong><br>
+                Máquina: {{ os.maquina.modelo }}<br>
+                Cliente: {{ os.maquina.cliente.nome }}<br>
+                Descrição: {{ os.descricao_problema }}<br>
+
+                <a href="{% url 'servicos_detalhe' os.id %}">👁 Ver</a> |
+                <a href="{% url 'servicos_finalizar' os.id %}">✔ Finalizar</a> |
+                <a href="{% url 'servicos_excluir' os.id %}" class="btn-delete">🗑 Excluir</a>
+            </div>
+        {% empty %}
+            <p>Nenhuma OS em andamento</p>
+        {% endfor %}
+    </div>
+
+    <!-- FINALIZADOS -->
+    <div style="width:30%">
+        <h4>🟩 Finalizados</h4>
+
+        {% for os in finalizados|dictsortreversed:"criado_em" %}
+            <div style="border:1px solid #444; padding:10px; margin-bottom:10px">
+                <strong>OS #{{ os.id }}</strong><br>
+                <strong>Máquina:</strong> {{ os.maquina.modelo }}<br>
+                <strong>Cliente:</strong> {{ os.maquina.cliente.nome }}<br>
+                <strong>Descrição:</strong> {{ os.descricao_problema }}<br>
+                <p><strong>Valor Serviço:</strong><br>R$ {{ os.valor_servico }}</p>
+                <p><strong>Valor Total:</strong><br>R$ {{ os.total_geral }}</p>
+                <strong>Finalizado em:</strong> {{ os.finalizado_em|date:"d/m/Y H:i" }}
+
+
+                <a href="{% url 'servicos_detalhe' os.id %}">👁 Ver</a> |
+                <a href="{% url 'servicos_excluir' os.id %}" class="btn-delete">🗑 Excluir</a>
+            </div>
+        {% empty %}
+            <p>Nenhuma OS finalizada</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+<script>
+const input = document.getElementById("kanban-search");
+const box = document.getElementById("autocomplete-kanban");
+
+if (input) {
+  input.addEventListener("input", async () => {
+    const term = input.value.trim();
+
+    if (term.length < 2) {
+      box.style.display = "none";
+      return;
+    }
+
+    const res = await fetch(`/servicos/autocomplete/kanban/?term=${term}`);
+    const data = await res.json();
+
+    box.innerHTML = "";
+
+    data.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "autocomplete-item";
+      div.innerText = item.label;
+
+      div.onclick = () => {
+        input.value = item.value;
+        box.style.display = "none";
+      };
+
+      box.appendChild(div);
+    });
+
+    box.style.display = data.length ? "block" : "none";
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!box.contains(e.target) && e.target !== input) {
+      box.style.display = "none";
+    }
+  });
+}
+</script>
+{% endblock %}

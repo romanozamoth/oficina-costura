@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Excluir Ordem de Serviço</h2>
+
+<p>
+    Tem certeza que deseja excluir a OS #{{ os.id }}?
+</p>
+
+<p>
+    <strong>Máquina:</strong> {{ os.maquina.modelo }}<br>
+    <strong>Cliente:</strong> {{ os.maquina.cliente.nome }}<br>
+    <strong>Descrição:</strong> {{ os.descricao_problema }}<br>
+    <strong>Status:</strong> {{ os.get_status_display }}<br>
+    <p><strong>Valor Serviço:</strong><br>R$ {{ os.valor_servico }}</p>
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" style="background:#a00;color:#fff">
+        🗑 Confirmar exclusão
+    </button>
+
+    <a href="{% url 'servicos_detalhe' os.id %}">
+        Cancelar
+    </a>
+</form>
+{% endblock %}

@@ -1,0 +1,445 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Oficina de Costura</title>
+
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+
+    <style>
+        a {
+            text-decoration: none;
+        }
+
+        body {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #1e1e1e;
+            padding: 20px 28px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 6px 18px rgba(0,0,0,.25);
+        }
+
+        .nav-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-right: auto;
+            color: #fff;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        nav a:hover {
+            background: #333;
+            transform: translateY(-1px);
+        }
+
+        nav a.active {
+            background: #4caf50;
+            color: #000;
+        }
+
+        main {
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,.08);
+        }
+
+        h1, h2 {
+            margin-top: 0;
+        }
+
+        .card {
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            text-align: left;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: #000;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn-primary:hover {
+            background: #156b00;
+            transform: translateY(-1px);
+        }
+        .btn-cancel {
+            background: #860400;
+            color: #000;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn-cancel:hover {
+            background: #ff0000;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            color: #000;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 4px;
+            margin-bottom: 12px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comentario-imagens {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .comentario-card {
+            border-left: 3px solid #22c55e;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: #1f1f1f;
+        }
+
+        .comentario-header {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .comentario-imagens {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .comentario-imagens img.thumb {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+        
+        .imagens-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .img-card {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .img-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .status.aberto {
+            background: #ff0000;
+            color: #ffb6b6;
+        }
+
+        .status.andamento {
+            background: #d49100;
+            color: #ffd951;
+        }
+
+        .status.finalizado {
+            background: #06a700;
+            color: #7dff9b;
+        }
+
+        .comentario {
+            border-left: 4px solid #4caf50;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+        }
+
+        .inline-form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .inline-form input {
+            width: 120px;
+        }
+
+        .btn-warning {
+            background: #d49100;
+            color: #ffd951;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn-warning:hover {
+            background: #363100;
+            color: #fbff00;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: #000000;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn-success:hover {
+            background: #156b00;
+            color: #48ff00;
+            transform: translateY(-1px);
+        }
+        .btn-remove {
+            background: #7a0000;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn-remove:hover {
+            background: #ce3333;
+            color: #000000;
+            transform: translateY(-1px);
+        }
+
+        a.btn-warning {
+            background: #d49100;
+            color: #ffd951;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a.btn-warning:hover {
+            background: #363100;
+            color: #fbff00;
+            transform: translateY(-1px);
+        }
+
+        a.btn-success {
+            background: #4caf50;
+            color: #000000;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a.btn-success:hover {
+            background: #156b00;
+            color: #48ff00;
+            transform: translateY(-1px);
+        }
+
+        a.btn-remove {
+            background: #7a0000;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a.btn-remove:hover {
+            background: #ce3333;
+            color: #000000;
+            transform: translateY(-1px);
+        }
+        .logo img {
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .suggestions {
+            border: 1px solid #ccc;
+            background: #fff;
+            position: absolute;
+            z-index: 999;
+            width: 100%;
+        }
+
+        .suggestions div {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .suggestions div:hover {
+            background: #eee;
+        }
+
+        .autocomplete-wrapper {
+            position: relative;
+        }
+
+        .inline-form {
+            align-items: flex-end;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: calc(100% - 4px);
+            left: 0;
+            right: 0;
+
+            background: #1f1f1f;
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,.35);
+
+            max-height: 220px;
+            overflow-y: auto;
+
+            z-index: 9999;
+        }
+
+        .autocomplete-list div {
+            padding: 10px 12px;
+            cursor: pointer;
+            color: #e5e5e5;
+            font-size: 0.95rem;
+        }
+
+        .autocomplete-list div:hover {
+            background: #2f2f2f;
+        }
+
+        .kanban-filtro {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        margin-bottom: 20px;
+        }
+
+        .filtro-input {
+        position: relative;
+        flex: 1;
+        max-width: 420px;
+        }
+
+        .autocomplete-box {
+        position: absolute;
+        z-index: 9999;
+        }
+
+        .autocomplete-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        }
+
+        .autocomplete-item:hover {
+        background: #2c2c2c;
+        }
+
+        .limpar-filtro {
+        color: #f1c40f;
+        font-weight: bold;
+        text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav>
+    <a href="/" class="logo">
+        {% comment %} <img src="{% static 'img/logo.png' %}" alt="Logo"> {% endcomment %}
+        <img src="{% static 'img/logo01.ico' %}" alt="Logo">
+    </a>
+
+    <a href="/" class="{% if request.path == '/' %}active{% endif %}">📊 Dashboard</a>
+    <a href="/clientes/" class="{% if '/clientes/' in request.path %}active{% endif %}">👤 Clientes</a>
+    <a href="/maquinas/" class="{% if '/maquinas/' in request.path %}active{% endif %}">🛠️ Máquinas</a>
+    <a href="/servicos/" class="{% if '/servicos/' in request.path %}active{% endif %}">📋 OS</a>
+</nav>
+
+<main>
+    <!-- {% block content_title %}{% endblock %} -->
+    {% block content %}{% endblock %}
+</main>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

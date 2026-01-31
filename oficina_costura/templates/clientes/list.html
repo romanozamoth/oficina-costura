@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>👤 Clientes</h1>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'clientes_criar' %}" class="btn-primary">
+        ➕ Novo Cliente
+    </a>
+</div>
+
+<div class="card">
+    <form method="get" id="filtros" autocomplete="off" style="margin-bottom:20px;">
+        <div class="autocomplete-wrapper" style="max-width: 420px;">
+            <label>Buscar cliente
+        <a href="{% url 'clientes_listar' %}" class="btn-secondary" style="margin-top: 26px;">
+            ✖ Limpar Filtro
+        </a></label>
+            <input
+                type="text"
+                id="cliente-input"
+                placeholder="Digite nome ou telefone"
+                autocomplete="off"
+            >
+            <input type="hidden" name="cliente" id="cliente-id">
+            <div id="cliente-suggestions" class="autocomplete-list"></div>
+        </div>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Contato</th>
+                <th style="width: 120px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.nome }}</td>
+                <td>                    
+                    <a href="{{ cliente.telefone_whatsapp }}" target="_blank" title="WhatsApp">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="#25D366">
+                            <path d="M16 2C8.3 2 2 8.1 2 15.6c0 2.7.8 5.3 2.4 7.5L3 30l7-1.8c2 1.1 4.3 1.7 6.7 1.7 7.7 0 14-6.1 14-13.6S23.7 2 16 2zm0 25.3c-2.1 0-4.2-.6-6-1.7l-.4-.2-4.2 1.1 1.1-4-.3-.4c-1.5-2-2.2-4.3-2.2-6.7C4 9.3 9.4 4 16 4s12 5.3 12 11.6S22.6 27.3 16 27.3zm6.7-8.2c-.4-.2-2.3-1.1-2.6-1.2-.3-.1-.6-.2-.8.2-.2.3-.9 1.2-1.1 1.4-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-2-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.6.1-.2 0-.4 0-.6-.1-.2-.8-2-1.1-2.7-.3-.7-.6-.6-.8-.6h-.7c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 3s1.2 3.6 1.4 3.8c.2.2 2.3 3.6 5.6 5 .8.3 1.4.5 1.9.6.8.2 1.6.2 2.2.1.7-.1 2.3-.9 2.6-1.8.3-.9.3-1.7.2-1.8-.1-.2-.3-.3-.7-.5z"/>
+                        </svg>
+                        <span class="telefone">{{ cliente.telefone }}</span>
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'clientes_editar' cliente.id %}" title="Editar">✏️</a>
+                    &nbsp;
+                    <a href="{% url 'clientes_remover' cliente.id %}" title="Excluir">🗑️</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="3">Nenhum cliente cadastrado</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+  document.querySelectorAll(".telefone").forEach(el => {
+    const tel = el.innerText.replace(/\D/g, "");
+
+    if (tel.length === 11) {
+      el.innerText = `(${tel.slice(0,2)}) ${tel.slice(2,7)}-${tel.slice(7)}`;
+    }
+  });
+
+  function setupAutocomplete(inputId, hiddenId, boxId, url) {
+    const input = document.getElementById(inputId);
+    const hidden = document.getElementById(hiddenId);
+    const box = document.getElementById(boxId);
+
+    input.addEventListener("input", async () => {
+        const q = input.value;
+        box.innerHTML = "";
+
+       if (q.length < 2) {
+            box.innerHTML = "";
+            return;
+        }
+
+        const res = await fetch(`${url}?q=${q}`);
+        const data = await res.json();
+
+        data.forEach(item => {
+            const div = document.createElement("div");
+            div.textContent = item.text;
+            div.onclick = () => {
+                input.value = item.text;
+                hidden.value = item.id;
+                box.innerHTML = "";
+                document.getElementById("filtros").submit();
+                box.innerHTML = "";
+            };
+            box.appendChild(div);
+        });
+    });
+}
+setupAutocomplete(
+    "cliente-input",
+    "cliente-id",
+    "cliente-suggestions",
+    "/clientes/api/autocomplete/"
+);
+</script>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "admin/change_list.html" %}
+
+{% block content_title %}
+<h1>📊 Dashboard - Ordens de Serviço</h1>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 20px; margin-bottom: 20px;">
+    <div style="padding: 15px; background: #640000; border-radius: 6px;">
+        🔴 <strong>Abertas:</strong> {{ abertas }}
+    </div>
+
+    <div style="padding: 15px; background: #7c7400; border-radius: 6px;">
+        🟡 <strong>Em andamento:</strong> {{ andamento }}
+    </div>
+
+    <div style="padding: 15px; background: #085f00; border-radius: 6px;">
+        🟢 <strong>Finalizadas:</strong> {{ finalizadas }}
+    </div>
+
+    <div style="padding: 15px; background: #c300ff; border-radius: 6px;">
+        📅 <strong>Finalizadas hoje:</strong> {{ finalizadas_hoje }}
+    </div>
+</div>
+
+{{ block.super }}
+{% endblock %}

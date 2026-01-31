@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>🛠️ Máquinas</h1>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'maquinas_criar' %}" class="btn-primary">➕ Nova Máquina</a>
+</div>
+
+<div class="card">
+    <form method="get" id="filtros" style="margin-bottom:20px;">
+            <div class="grid-2">
+                <div class="autocomplete-wrapper">
+                    <label>Cliente</label>
+                    <input type="text" id="cliente-input" placeholder="Digite nome ou telefone" autocomplete="off">
+                    <input type="hidden" name="cliente" id="cliente-id">
+                    <div id="cliente-suggestions" class="autocomplete-list"></div>
+                </div>
+
+                <div class="autocomplete-wrapper">
+                    <label>Máquina 
+            <a href="{% url 'maquinas_listar' %}" class="btn-secondary" style="margin-top: 26px;">
+                ✖ Limpar Filtro
+            </a></label>
+                    <input type="text" id="maquina-input" placeholder="Digite modelo ou nº série" autocomplete="off">
+                    <input type="hidden" name="maquina" id="maquina-id">
+                    <div id="maquina-suggestions" class="autocomplete-list"></div>
+                </div>
+            </div>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Máquina - Cliente</th>
+                <th style="width: 120px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for maquina in maquinas %}
+            <tr>
+                <td>
+                    {% if maquina.imagem %}
+                        <img src="{{ maquina.imagem.url }}" alt="{{ maquina.modelo }}" width="50" style="border-radius:6px; margin-right:5px;" onclick="abrirImagem('{{ maquina.imagem.url }}')">
+                    {% endif %}
+                </td>
+                <td>{{ maquina.modelo }} — {{ maquina.cliente.nome }}</td>
+                <td>
+                    <a href="{% url 'maquinas_editar' maquina.id %}">✏️</a>
+                    &nbsp;
+                    <a href="{% url 'maquinas_remover' maquina.id %}">🗑️</a>
+                </td>
+            </li>
+        {% empty %}
+            <tr>
+                <td colspan="3">Nenhuma máquina cadastrada</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div id="modal-imagem" class="modal" onclick="fecharImagem()">
+    <img id="modal-img">
+</div>
+<script>
+    function abrirImagem(src) {
+        document.getElementById("modal-img").src = src;
+        document.getElementById("modal-imagem").style.display = "flex";
+    }
+
+    function fecharImagem() {
+        document.getElementById("modal-imagem").style.display = "none";
+    }
+
+function setupAutocomplete(inputId, hiddenId, boxId, url) {
+    const input = document.getElementById(inputId);
+    const hidden = document.getElementById(hiddenId);
+    const box = document.getElementById(boxId);
+
+    input.addEventListener("input", async () => {
+        const q = input.value;
+        box.innerHTML = "";
+
+       if (q.length < 2) {
+            box.innerHTML = "";
+            return;
+        }
+
+        const res = await fetch(`${url}?q=${q}`);
+        const data = await res.json();
+
+        data.forEach(item => {
+            const div = document.createElement("div");
+            div.textContent = item.text;
+            div.onclick = () => {
+                input.value = item.text;
+                hidden.value = item.id;
+                box.innerHTML = "";
+                document.getElementById("filtros").submit();
+                box.innerHTML = "";
+            };
+            box.appendChild(div);
+        });
+    });
+}
+
+setupAutocomplete(
+    "cliente-input",
+    "cliente-id",
+    "cliente-suggestions",
+    "/clientes/api/autocomplete/"
+);
+
+setupAutocomplete(
+    "maquina-input",
+    "maquina-id",
+    "maquina-suggestions",
+    "/maquinas/api/autocomplete/"
+);
+</script>
+{% endblock %}

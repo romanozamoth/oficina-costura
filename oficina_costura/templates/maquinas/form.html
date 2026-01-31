@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>🛠️ Nova Máquina</h1>
+
+<div class="card">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+
+                {# Mostrar preview só para o campo imagem #}
+                {% if field.name == "imagem" and form.instance.imagem %}
+                    <br>
+                    <img src="{{ form.instance.imagem.url }}" alt="Imagem da máquina" width="120" style="border-radius:8px; margin-bottom:10px;" onclick="abrirImagem('{{ form.instance.imagem.url }}')">
+                {% endif %}
+
+                {{ field }}
+
+                {% if field.errors %}
+                    <small style="color:red">{{ field.errors }}</small>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn-primary">💾 Salvar</button>
+            <a href="{% url 'maquinas_listar' %}" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
+</div>
+<div id="modal-imagem" class="modal" onclick="fecharImagem()">
+    <img id="modal-img">
+</div>
+<script>
+    function abrirImagem(src) {
+        document.getElementById("modal-img").src = src;
+        document.getElementById("modal-imagem").style.display = "flex";
+    }
+
+    function fecharImagem() {
+        document.getElementById("modal-imagem").style.display = "none";
+    }
+</script>
+{% endblock %}
