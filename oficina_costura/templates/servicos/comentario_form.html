@@ -1,84 +1,98 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container">
-    <h2>Editar Comentário</h2>
+  <h2>Editar Comentário</h2>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+  <form method="post" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token %}
 
-        <!-- Campo do comentário -->
-        <label for="{{ form.comentario.id_for_label }}">Comentário</label>
-        {{ form.comentario }}
+    <!-- Campo do comentário -->
+    <label for="{{ form.comentario.id_for_label }}">Comentário</label>
+    {{ form.comentario }}
 
-        <!-- Upload de imagens novas -->
-        <label for="imagens">Adicionar Imagens</label>
-        <input type="file" name="imagens" multiple accept="image/*">
+    <!-- Upload de imagens novas -->
+    <label for="imagens">Adicionar Imagens</label>
+    <input type="file" name="imagens" multiple accept="image/*" />
 
-        <!-- Imagens já anexadas -->
-        {% if imagens %}
-        <div class="comentario-imagens">
-            <h4>Imagens anexadas:</h4>
-            <div class="imagens-wrapper">
-                {% for img in imagens %}
-                    <div class="img-card">
-                        <img src="{{ img.imagem.url }}" onclick="abrirImagem('{{ img.imagem.url }}')" alt="Imagem do comentário">
-                        <a href="{% url 'excluir_imagem' img.id %}" 
-                           onclick="return confirm('Excluir imagem?')"
-                           class="btn btn-delete">🗑</a>
-                    </div>
-                {% endfor %}
-            </div>
+    <!-- Imagens já anexadas -->
+    {% if imagens %}
+    <div class="comentario-imagens">
+      <h4>Imagens anexadas:</h4>
+      <div class="imagens-wrapper">
+        {% for img in imagens %}
+        <div class="img-card">
+          <img
+            src="{{ img.imagem.url }}"
+            onclick="abrirImagem('{{ img.imagem.url }}')"
+            alt="Imagem do comentário"
+          />
+          <a
+            href="{% url 'excluir_imagem' img.id %}"
+            onclick="return confirm('Excluir imagem?');"
+            class="btn btn-delete"
+            >🗑</a
+          >
         </div>
-        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
 
-        <div class="form-buttons">
-            <button type="submit" class="btn btn-success">💾 Salvar</button>
-            <a href="{% url 'servicos_detalhe' comentario.ordem_servico.id %}" class="btn btn-cancel">❌ Cancelar</a>
-            <a href="{% url 'excluir_comentario' comentario.id %}" onclick="return confirm('Excluir comentário?')" class="btn-remove">🗑 Excluir Comentário</a>
-        </div>
-    </form>
+    <div class="form-buttons">
+      <button type="submit" class="btn btn-success">💾 Salvar</button>
+      <a
+        href="{% url 'servicos_detalhe' comentario.ordem_servico.id %}"
+        class="btn btn-cancel"
+        >❌ Cancelar</a
+      >
+      <a
+        href="{% url 'excluir_comentario' comentario.id %}"
+        onclick="return confirm('Excluir comentário?');"
+        class="btn-remove"
+        >🗑 Excluir Comentário</a
+      >
+    </div>
+  </form>
 </div>
 <div id="modal-imagem" class="modal" onclick="fecharImagem()">
-    <img id="modal-img">
+  <img id="modal-img" />
 </div>
 <script>
-    function abrirImagem(src) {
-        document.getElementById("modal-img").src = src;
-        document.getElementById("modal-imagem").style.display = "flex";
-    }
+  function abrirImagem(src) {
+    document.getElementById("modal-img").src = src;
+    document.getElementById("modal-imagem").style.display = "flex";
+  }
 
-    function fecharImagem() {
-        document.getElementById("modal-imagem").style.display = "none";
-    }
+  function fecharImagem() {
+    document.getElementById("modal-imagem").style.display = "none";
+  }
 </script>
 <style>
-.comentario-imagens {
+  .comentario-imagens {
     margin-top: 20px;
-}
+  }
 
-.imagens-wrapper {
+  .imagens-wrapper {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-}
+  }
 
-.img-card {
+  .img-card {
     position: relative;
     width: 100px;
     height: 100px;
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid #ccc;
-}
+  }
 
-.img-card img {
+  .img-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
+  }
 
-.btn-delete {
+  .btn-delete {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -88,11 +102,11 @@
     border-radius: 50%;
     text-decoration: none;
     font-weight: bold;
-}
+  }
 
-.btn-delete:hover {
-    background-color: rgba(200,0,0,0.9);
-}
+  .btn-delete:hover {
+    background-color: rgba(200, 0, 0, 0.9);
+  }
 </style>
 
 {% endblock %}

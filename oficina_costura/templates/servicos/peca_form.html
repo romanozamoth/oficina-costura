@@ -1,61 +1,62 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <h2>🔩 {% if form.instance.pk %}Editar{% else %}Adicionar{% endif %} Peça</h2>
 
 <div class="card">
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+  <form method="post" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token %}
 
-        <div class="form-group">
-            <label>Nome da Peça</label>
-            {{ form.nome }}
-        </div>
+    <div class="form-group">
+      <label>Nome da Peça</label>
+      {{ form.nome }}
+    </div>
 
-        <div class="grid-2">
-            <div class="form-group">
-                <label>Quantidade</label>
-                {{ form.quantidade }}
-            </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Quantidade</label>
+        {{ form.quantidade }}
+      </div>
 
-            <div class="form-group">
-                <label>Valor Unitário</label>
-                {{ form.valor_unitario }}
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label>Imagem da Peça</label>
-            {% if form.instance.imagem %}
-                <br>
-                <img src="{{ form.instance.imagem.url }}" alt="Imagem da peça" width="120" style="border-radius:8px; margin-bottom:10px;" onclick="abrirImagem('{{ form.instance.imagem.url }}')">
-            {% endif %}
-            {{ form.imagem }}
-        </div>
+      <div class="form-group">
+        <label>Valor Unitário</label>
+        {{ form.valor_unitario }}
+      </div>
+    </div>
 
-        <div style="margin-top: 15px;">
-            <button type="submit" class="btn-primary">
-                💾 Salvar
-            </button>
+    <div class="form-group">
+      <label>Imagem da Peça</label>
+      {% if form.instance.imagem %}
+      <br />
+      <img
+        src="{{ form.instance.imagem.url }}"
+        alt="Imagem da peça"
+        width="120"
+        style="border-radius: 8px; margin-bottom: 10px"
+        onclick="abrirImagem('{{ form.instance.imagem.url }}')"
+      />
+      {% endif %} {{ form.imagem }}
+    </div>
 
-            <a href="{% url 'servicos_detalhe' os.id %}" class="btn-secondary">
-                ↩ Voltar
-            </a>
-        </div>
-    </form>
+    <div style="margin-top: 15px">
+      <button type="submit" class="btn-primary">💾 Salvar</button>
+
+      <a href="{% url 'servicos_detalhe' os.id %}" class="btn-secondary">
+        ↩ Voltar
+      </a>
+    </div>
+  </form>
 </div>
 
 <div id="modal-imagem" class="modal" onclick="fecharImagem()">
-    <img id="modal-img">
+  <img id="modal-img" />
 </div>
 <script>
-    function abrirImagem(src) {
-        document.getElementById("modal-img").src = src;
-        document.getElementById("modal-imagem").style.display = "flex";
-    }
+  function abrirImagem(src) {
+    document.getElementById("modal-img").src = src;
+    document.getElementById("modal-imagem").style.display = "flex";
+  }
 
-    function fecharImagem() {
-        document.getElementById("modal-imagem").style.display = "none";
-    }
+  function fecharImagem() {
+    document.getElementById("modal-imagem").style.display = "none";
+  }
 </script>
 {% endblock %}

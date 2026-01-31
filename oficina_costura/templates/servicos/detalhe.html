@@ -1,236 +1,276 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <h1>📋 Ordem de Serviço #{{ os.id }}</h1>
 
 <div class="card">
-    <div class="grid-3">
-        <div>
-            <p><strong>Cliente</strong><br>{{ os.maquina.cliente.nome }}</p>
-            <p><strong>Máquina</strong><br>{{ os.maquina.modelo }}</p>
-        </div>
-
-        <div>
-            <p><strong>Contato</strong><br>
-                <a href="{{ os.maquina.cliente.telefone_whatsapp }}" target="_blank" title="WhatsApp">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="#25D366">
-                    <path d="M16 2C8.3 2 2 8.1 2 15.6c0 2.7.8 5.3 2.4 7.5L3 30l7-1.8c2 1.1 4.3 1.7 6.7 1.7 7.7 0 14-6.1 14-13.6S23.7 2 16 2zm0 25.3c-2.1 0-4.2-.6-6-1.7l-.4-.2-4.2 1.1 1.1-4-.3-.4c-1.5-2-2.2-4.3-2.2-6.7C4 9.3 9.4 4 16 4s12 5.3 12 11.6S22.6 27.3 16 27.3zm6.7-8.2c-.4-.2-2.3-1.1-2.6-1.2-.3-.1-.6-.2-.8.2-.2.3-.9 1.2-1.1 1.4-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-2-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.6.1-.2 0-.4 0-.6-.1-.2-.8-2-1.1-2.7-.3-.7-.6-.6-.8-.6h-.7c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 3s1.2 3.6 1.4 3.8c.2.2 2.3 3.6 5.6 5 .8.3 1.4.5 1.9.6.8.2 1.6.2 2.2.1.7-.1 2.3-.9 2.6-1.8.3-.9.3-1.7.2-1.8-.1-.2-.3-.3-.7-.5z"/>
-                </svg>
-                <span id="telefone">{{ os.maquina.cliente.telefone }}</span>
-            </a></p>
-
-            <p><strong>Criado em</strong><br>
-                {{ os.criado_em|date:"d/m/Y H:i" }}
-            </p>
-        </div>
-
-        <div>
-            <p>
-                <strong>Status</strong><br>
-                <span class="status {{ os.status }}">
-                    {{ os.get_status_display }}
-                </span>
-            </p>
-            
-            <p><strong>Ações OS</strong>
-                    <br>
-                    <br>
-                {% if os.status == 'aberto' %}
-                    <a href="{% url 'servicos_iniciar' os.id %}" class="btn-warning">
-                        ▶ Iniciar Serviço
-                    </a>
-                {% endif %}
-
-                {% if os.status == 'andamento' %}
-                    <a href="{% url 'servicos_finalizar' os.id %}" class="btn-success">
-                        ✔ Finalizar Serviço
-                    </a>
-                {% endif %}
-
-                {% if os.status == 'finalizado' %}
-                    <a href="{% url 'servicos_excluir' os.id %}" class="btn-remove">
-                        🗑 Excluir Serviço
-                    </a>
-                {% endif %}
-            </p>
-        </div>
+  <div class="grid-3">
+    <div>
+      <p><strong>Cliente</strong><br />{{ os.maquina.cliente.nome }}</p>
+      <p><strong>Máquina</strong><br />{{ os.maquina.modelo }}</p>
     </div>
+
+    <div>
+      <p>
+        <strong>Contato</strong><br />
+        <a
+          href="{{ os.maquina.cliente.telefone_whatsapp }}"
+          target="_blank"
+          title="WhatsApp"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 32 32"
+            fill="#25D366"
+          >
+            <path
+              d="M16 2C8.3 2 2 8.1 2 15.6c0 2.7.8 5.3 2.4 7.5L3 30l7-1.8c2 1.1 4.3 1.7 6.7 1.7 7.7 0 14-6.1 14-13.6S23.7 2 16 2zm0 25.3c-2.1 0-4.2-.6-6-1.7l-.4-.2-4.2 1.1 1.1-4-.3-.4c-1.5-2-2.2-4.3-2.2-6.7C4 9.3 9.4 4 16 4s12 5.3 12 11.6S22.6 27.3 16 27.3zm6.7-8.2c-.4-.2-2.3-1.1-2.6-1.2-.3-.1-.6-.2-.8.2-.2.3-.9 1.2-1.1 1.4-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3.1-2-1.1-1-1.9-2.3-2.1-2.7-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.4-.6.1-.2 0-.4 0-.6-.1-.2-.8-2-1.1-2.7-.3-.7-.6-.6-.8-.6h-.7c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 3s1.2 3.6 1.4 3.8c.2.2 2.3 3.6 5.6 5 .8.3 1.4.5 1.9.6.8.2 1.6.2 2.2.1.7-.1 2.3-.9 2.6-1.8.3-.9.3-1.7.2-1.8-.1-.2-.3-.3-.7-.5z"
+            />
+          </svg>
+          <span id="telefone">{{ os.maquina.cliente.telefone }}</span>
+        </a>
+      </p>
+
+      <p>
+        <strong>Criado em</strong><br />
+        {{ os.criado_em|date:"d/m/Y H:i" }}
+      </p>
+    </div>
+
+    <div>
+      <p>
+        <strong>Status</strong><br />
+        <span class="status {{ os.status }}">
+          {{ os.get_status_display }}
+        </span>
+      </p>
+
+      <p>
+        <strong>Ações OS</strong>
+        <br />
+        <br />
+        {% if os.status == 'aberto' %}
+        <a href="{% url 'servicos_iniciar' os.id %}" class="btn-warning">
+          ▶ Iniciar Serviço
+        </a>
+        {% endif %} {% if os.status == 'andamento' %}
+        <a href="{% url 'retornar_inicio_os' os.id %}" class="btn-warning">
+          🠔 Retornar </a
+        ><p />
+        <a href="{% url 'servicos_finalizar' os.id %}" class="btn-success">
+          ✔ Finalizar Serviço
+        </a>
+        {% endif %} {% if os.status == 'finalizado' %}
+        <a href="{% url 'retornar_andamento_os' os.id %}" class="btn-warning">
+          🠔 Retornar
+        </a><p />
+        <a href="{% url 'servicos_excluir' os.id %}" class="btn-remove">
+          🗑 Excluir Serviço
+        </a>
+        {% endif %}
+      </p>
+    </div>
+  </div>
 </div>
 
 <div class="grid-2">
-    <!-- 💰 VALOR DO SERVIÇO -->
-    <div class="card">
-        <h3>💰 Valor do Serviço</h3>
+  <!-- 💰 VALOR DO SERVIÇO -->
+  <div class="card">
+    <h3>💰 Valor do Serviço</h3>
 
-        <div id="valor-view">
-            {% if os.valor_servico %}
-                <strong>R$ {{ os.valor_servico }}</strong>
-            {% else %}
-                <em>Valor não definido</em>
-            {% endif %}
+    <div id="valor-view">
+      {% if os.valor_servico %}
+      <strong>R$ {{ os.valor_servico }}</strong>
+      {% else %}
+      <em>Valor não definido</em>
+      {% endif %}
 
-            <button onclick="editarValor()" title="Editar">✏️</button>
-        </div>
-
-        <div id="valor-edit" style="display:none;">
-            <form method="post" class="inline-form">
-                {% csrf_token %}
-                {{ valor_form.valor_servico }}
-
-                <button type="submit" name="salvar_valor" title="Salvar">✔</button>
-                <button type="button" onclick="cancelarEdicao()" title="Cancelar">✖</button>
-            </form>
-        </div>
-        <h3>🧾 Total Geral</h3>
-        <p style="font-size: 1.2em;">
-            <strong>R$ {{ os.total_geral }}</strong>
-        </p>
+      <button onclick="editarValor()" title="Editar">✏️</button>
     </div>
 
-    <!-- 🔩 PEÇAS -->
-    <div class="card">
-        <h3>🔩 Peças</h3>
+    <div id="valor-edit" style="display: none">
+      <form method="post" class="inline-form">
+        {% csrf_token %} {{ valor_form.valor_servico }}
 
-        {% if os.pecas.exists %}
-            <ul>
-                {% for peca in os.pecas.all %}
-                    <li>
-                        {% if peca.imagem %}
-                            <img src="{{ peca.imagem.url }}" alt="{{ peca.nome }}" width="60" style="border-radius:6px; margin-right:5px;" onclick="abrirImagem('{{ peca.imagem.url }}')">
-                        {% endif %}
-                        {{ peca.nome }}
-                        <br>
-                        Valor —
-                        <strong>R$ {{ peca.total }}</strong>
-                        <a href="{% url 'editar_peca_os' peca.id %}"
-                            class="btn-delete"
-                            title="Editar Peça">
-                            👁
-                        </a>
-                        <a href="{% url 'excluir_peca_os' peca.id %}"
-                            class="btn-delete"
-                            title="Excluir Peça"
-                            onclick="return confirmarExclusao();">
-                            🗑
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
+        <button type="submit" name="salvar_valor" title="Salvar">✔</button>
+        <button type="button" onclick="cancelarEdicao()" title="Cancelar">
+          ✖
+        </button>
+      </form>
+    </div>
+    <h3>🧾 Total Geral</h3>
+    <p style="font-size: 1.2em">
+      <strong>R$ {{ os.total_geral }}</strong>
+    </p>
+  </div>
 
-            <p>
-                <strong>Total das Peças:</strong>
-                R$ {{ os.total_pecas }}
-            </p>
-        {% else %}
-            <em>Nenhuma peça adicionada</em><br>
-        {% endif %}
-        <br>
-        <a href="{% url 'adicionar_peca_os' os.id %}" class="btn-primary">
-            ➕ Adicionar Peça
+  <!-- 🔩 PEÇAS -->
+  <div class="card">
+    <h3>🔩 Peças</h3>
+
+    {% if os.pecas.exists %}
+    <ul>
+      {% for peca in os.pecas.all %}
+      <li>
+        {% if peca.imagem %}
+        <img
+          src="{{ peca.imagem.url }}"
+          alt="{{ peca.nome }}"
+          width="60"
+          style="border-radius: 6px; margin-right: 5px"
+          onclick="abrirImagem('{{ peca.imagem.url }}')"
+        />
+        {% endif %} {{ peca.nome }}
+        <br />
+        Valor —
+        <strong>R$ {{ peca.total }}</strong>
+        <a
+          href="{% url 'editar_peca_os' peca.id %}"
+          class="btn-delete"
+          title="Editar Peça"
+        >
+          👁
         </a>
-    </div>
+        <a
+          href="{% url 'excluir_peca_os' peca.id %}"
+          class="btn-delete"
+          title="Excluir Peça"
+          onclick="return confirmarExclusao();"
+        >
+          🗑
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <p>
+      <strong>Total das Peças:</strong>
+      R$ {{ os.total_pecas }}
+    </p>
+    {% else %}
+    <em>Nenhuma peça adicionada</em><br />
+    {% endif %}
+    <br />
+    <a href="{% url 'adicionar_peca_os' os.id %}" class="btn-primary">
+      ➕ Adicionar Peça
+    </a>
+  </div>
 </div>
 
 <div class="card">
-    <h3>🛠️ Descrição do Problema</h3>
-    <p>{{ os.descricao_problema }}</p>
+  <h3>🛠️ Descrição do Problema</h3>
+  <p>{{ os.descricao_problema }}</p>
 </div>
 
 <div class="grid-2">
-    <div class="card">
-        <h3>💬 Comentários</h3>
+  <div class="card">
+    <h3>💬 Comentários</h3>
 
-        {% for comentario in os.comentarios.all|dictsortreversed:"criado_em" %}
-            <div class="comentario-card">
-                <div class="comentario-header">
-                    <small>{{ comentario.criado_em|date:"d/m/Y H:i" }}</small>
+    {% for comentario in os.comentarios.all|dictsortreversed:"criado_em" %}
+    <div class="comentario-card">
+      <div class="comentario-header">
+        <small>{{ comentario.criado_em|date:"d/m/Y H:i" }}</small>
 
-                    <div>
-                        <a href="{% url 'editar_comentario' comentario.id %}">✏️</a>
-                        <a href="{% url 'excluir_comentario' comentario.id %}"
-                        onclick="return confirm('Excluir comentário?')">🗑</a>
-                    </div>
-                </div>
+        <div>
+          <a href="{% url 'editar_comentario' comentario.id %}">✏️</a>
+          <a
+            href="{% url 'excluir_comentario' comentario.id %}"
+            onclick="return confirm('Excluir comentário?');"
+            >🗑</a
+          >
+        </div>
+      </div>
 
-                <p>{{ comentario.comentario }}</p>
-                
-                <div class="imagens-wrapper">
-                    {% for img in comentario.imagens.all %}
-                        <div class="img-card">
-                            <img src="{{ img.imagem.url }}" onclick="abrirImagem('{{ img.imagem.url }}')" alt="Imagem do comentário">
-                            <a href="{% url 'excluir_imagem' img.id %}"
-                            onclick="return confirm('Excluir imagem?')">🗑</a>
-                        </div>
-                    {% endfor %}
-                </div>
-                {% comment %} <div class="comentario-imagens">
-                    {% for img in comentario.imagens.all %}
-                        <div class="img-wrapper">
-                            <img src="{{ img.imagem.url }}"
-                                onclick="abrirImagem('{{ img.imagem.url }}')">
-                            <a href="{% url 'excluir_imagem' img.id %}"
-                            onclick="return confirm('Excluir imagem?')">🗑</a>
-                        </div>
-                    {% endfor %}
-                </div> {% endcomment %}
-            </div>
-        {% empty %}
-            <p>Nenhum comentário</p>
+      <p>{{ comentario.comentario }}</p>
+
+      <div class="imagens-wrapper">
+        {% for img in comentario.imagens.all %}
+        <div class="img-card">
+          <img
+            src="{{ img.imagem.url }}"
+            onclick="abrirImagem('{{ img.imagem.url }}')"
+            alt="Imagem do comentário"
+          />
+          <a
+            href="{% url 'excluir_imagem' img.id %}"
+            onclick="return confirm('Excluir imagem?');"
+            >🗑</a
+          >
+        </div>
         {% endfor %}
+      </div>
+      {% comment %}
+      <div class="comentario-imagens">
+        {% for img in comentario.imagens.all %}
+        <div class="img-wrapper">
+          <img
+            src="{{ img.imagem.url }}"
+            onclick="abrirImagem('{{ img.imagem.url }}')"
+          />
+          <a
+            href="{% url 'excluir_imagem' img.id %}"
+            onclick="return confirm('Excluir imagem?');"
+            >🗑</a
+          >
+        </div>
+        {% endfor %}
+      </div>
+      {% endcomment %}
     </div>
+    {% empty %}
+    <p>Nenhum comentário</p>
+    {% endfor %}
+  </div>
 
-    <div class="card">
-        <h3>➕ Novo Comentário</h3>
+  <div class="card">
+    <h3>➕ Novo Comentário</h3>
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+    <form method="post" enctype="multipart/form-data" autocomplete="off">
+      {% csrf_token %} {{ comentario_form.as_p }}
 
-            {{ comentario_form.as_p }}
+      <label>Imagens</label>
+      <input type="file" name="imagens" multiple accept="image/*" />
 
-            <label>Imagens</label>
-            <input type="file" name="imagens" multiple accept="image/*">
-
-            <button type="submit" name="salvar_comentario" class="btn-primary">
-                Adicionar
-            </button>
-        </form>
-    </div>
+      <button type="submit" name="salvar_comentario" class="btn-primary">
+        Adicionar
+      </button>
+    </form>
+  </div>
 </div>
 
 <a href="{% url 'servicos_kanban' %}" class="btn-secondary">⬅ Voltar</a>
-{% endblock %}
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <div id="modal-imagem" class="modal" onclick="fecharImagem()">
-    <img id="modal-img">
+  <img id="modal-img" />
 </div>
 <script>
-    function editarValor() {
-        document.getElementById("valor-view").style.display = "none";
-        document.getElementById("valor-edit").style.display = "block";
-    }
+  function editarValor() {
+    document.getElementById("valor-view").style.display = "none";
+    document.getElementById("valor-edit").style.display = "block";
+  }
 
-    function cancelarEdicao() {
-        document.getElementById("valor-edit").style.display = "none";
-        document.getElementById("valor-view").style.display = "block";
-    }
+  function cancelarEdicao() {
+    document.getElementById("valor-edit").style.display = "none";
+    document.getElementById("valor-view").style.display = "block";
+  }
 
-    function confirmarExclusao() {
-        return confirm("Tem certeza que deseja excluir esta peça?");
-    }
-    const el = document.getElementById("telefone");
-    const tel = el.innerText.replace(/\D/g, "");
+  function confirmarExclusao() {
+    return confirm("Tem certeza que deseja excluir esta peça?");
+  }
+  const el = document.getElementById("telefone");
+  const tel = el.innerText.replace(/\D/g, "");
 
-    if (tel.length === 11) {
-    el.innerText = `(${tel.slice(0,2)}) ${tel.slice(2,7)}-${tel.slice(7)}`;
-    }
+  if (tel.length === 11) {
+    el.innerText = `(${tel.slice(0, 2)}) ${tel.slice(2, 7)}-${tel.slice(7)}`;
+  }
 
-    function abrirImagem(src) {
-        document.getElementById("modal-img").src = src;
-        document.getElementById("modal-imagem").style.display = "flex";
-    }
+  function abrirImagem(src) {
+    document.getElementById("modal-img").src = src;
+    document.getElementById("modal-imagem").style.display = "flex";
+  }
 
-    function fecharImagem() {
-        document.getElementById("modal-imagem").style.display = "none";
-    }
+  function fecharImagem() {
+    document.getElementById("modal-imagem").style.display = "none";
+  }
 </script>
 {% endblock %}

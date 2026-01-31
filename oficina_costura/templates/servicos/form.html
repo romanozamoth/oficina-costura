@@ -1,28 +1,21 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <h1>📋 Nova Ordem de Serviço</h1>
 
-
 <div class="card">
-    <form method="post">
-        {% csrf_token %}
+  <form method="post" autocomplete="off">
+    {% csrf_token %} {% for field in form %}
+    <label>
+      {{ field.label }} {{ field }} {% if field.errors %}
+      <small style="color: red">{{ field.errors }}</small>
+      {% endif %}
+    </label>
+    {% endfor %}
 
-        {% for field in form %}
-            <label>
-                {{ field.label }}
-                {{ field }}
-                {% if field.errors %}
-                    <small style="color:red">{{ field.errors }}</small>
-                {% endif %}
-            </label>
-        {% endfor %}
-
-        <div style="margin-top: 20px;">
-            <button type="submit" class="btn-primary">💾 Salvar</button>
-            <a href="{% url 'servicos_kanban' %}" class="btn-cancel">Cancelar</a>
-        </div>
-    </form>
+    <div style="margin-top: 20px">
+      <button type="submit" class="btn-primary">💾 Salvar</button>
+      <a href="{% url 'servicos_kanban' %}" class="btn-cancel">Cancelar</a>
+    </div>
+  </form>
 </div>
-<br>
+<br />
 {% endblock %}
