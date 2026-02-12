@@ -1,17 +1,20 @@
-SISTEMA DE ORDENS DE SERVICO
+# SISTEMA DE ORDENS DE SERVICO
+
+## Procedimento
 
 1. Extraia o arquivo ZIP
-2. Clique duas vezes em start.bat
+2. Clique duas vezes no start.bat conforme escolha
 3. Aguarde abrir o navegador
 4. Acesse: http://127.0.0.1:8000
 
-Requisitos:
-- Windows
+## Requisitos:
 - Python 3.11+ instalado
 
 
 
+
 # Debug/Dev
+
 habilitar venv PowerShell
 ```bash
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
