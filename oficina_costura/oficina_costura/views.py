@@ -57,9 +57,9 @@ def dashboard(request):
             finalizado_em__date=date.today()
         ).count(),
 
-        'faturamento_mensal': faturamento_mensal,
-        'faturamento_total': faturamento_total,
-        'faturamento_aberto': faturamento_aberto,
+        'faturamento_mensal': round(faturamento_mensal, 2),
+        'faturamento_total': round(faturamento_total, 2),
+        'faturamento_aberto': round(faturamento_aberto, 2),
         
         'meses': meses,
         'valores': valores,
