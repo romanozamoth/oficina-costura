@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.db.models.functions import TruncMonth
 from datetime import date
-from servicos.models import OrdemServico
-from django.db.models import Sum
+from servicos.models import OrdemServico, PecaOS
+from django.db.models import Sum, F, DecimalField, ExpressionWrapper
 
 def dashboard(request):
     now = timezone.now()
@@ -47,6 +47,36 @@ def dashboard(request):
     for item in faturamento_por_mes:
         meses.append(item['mes'].strftime('%b/%Y'))
         valores.append(float(item['total']))
+    
+    # PEÇAS
+    
+    valor_total_peca = ExpressionWrapper(
+        F('valor_unitario') * F('quantidade'),
+        output_field=DecimalField(max_digits=12, decimal_places=2)
+    )
+    pecas_mensal = (
+        PecaOS.objects
+        .filter(
+            ordem_servico__status='finalizado',
+            ordem_servico__finalizado_em__year=now.year,
+            ordem_servico__finalizado_em__month=now.month
+        )
+        .aggregate(total=Sum(valor_total_peca))
+    )['total'] or 0
+    pecas_por_mes = (
+        PecaOS.objects
+        .filter(ordem_servico__status='finalizado')
+        .annotate(mes=TruncMonth('ordem_servico__finalizado_em'))
+        .values('mes')
+        .annotate(total=Sum(valor_total_peca))
+        .order_by('mes')
+    )
+    meses_pecas = []
+    valores_pecas = []
+
+    for item in pecas_por_mes:
+        meses_pecas.append(item['mes'].strftime('%b/%Y'))
+        valores_pecas.append(float(item['total']))
 
     return render(request, 'dashboard.html', {
         'abertas': OrdemServico.objects.filter(status='aberto').count(),
@@ -63,4 +93,8 @@ def dashboard(request):
         
         'meses': meses,
         'valores': valores,
+        
+        'pecas_mensal': round(pecas_mensal, 2),
+        'meses_pecas': meses_pecas,
+        'valores_pecas': valores_pecas,
     })

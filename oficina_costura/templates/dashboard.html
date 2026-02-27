@@ -68,6 +68,29 @@
 </div>
 
 <br />
+<!-- Card peças sozinho -->
+<div class="finance-top">
+  <div class="card destaque2">
+    <h3>
+      📅 Valor Peças Mensal
+      <span class="eye" onclick="toggleValorPecas(this)">👁</span>
+    </h3>
+    <p class="valor" data-valor="R$ {{ pecas_mensal  }}">••••••</p>
+
+    <h3 style="cursor: pointer" onclick="toggleGraficoPecas()" id="tituloGraficoPecas">
+      📈 Peças por Mês (ver detalhes)
+    </h3>
+
+    <div id="graficoContainerPecas" class="grafico-oculto">
+      <div class="card" style="background: #fff; color: #000">
+        <canvas id="graficoMensalPecas"></canvas>
+      </div>
+    </div>
+    <p />
+  </div>
+</div>
+
+<br />
 {{ block.super }}
 <style>
   /* Layout */
@@ -102,6 +125,9 @@
   /* Cores */
   .card.destaque {
     background: linear-gradient(135deg, #6a11cb, #2575fc);
+  }
+  .card.destaque2 {
+    background: linear-gradient(135deg, #1e3c72, #2575fc);
   }
 
   .card.warning {
@@ -178,6 +204,32 @@
         icone.textContent = "👁"; // ícone aberto
       }
     }
+    function toggleGraficoPecas() {
+      const container = document.getElementById("graficoContainerPecas");
+      const titulo = document.getElementById("tituloGraficoPecas");
+
+      if (container.classList.contains("grafico-oculto")) {
+          container.classList.remove("grafico-oculto");
+          container.classList.add("grafico-visivel");
+          titulo.innerHTML = "📉 Peças por Mês (ocultar detalhes)";
+      } else {
+          container.classList.remove("grafico-visivel");
+          container.classList.add("grafico-oculto");
+          titulo.innerHTML = "📈 Peças por Mês (ver detalhes)";
+      }
+  }
+    function toggleValorPecas(icone) {
+      const card = icone.closest(".card");
+      const valorEl = card.querySelector(".valor");
+
+      if (valorEl.textContent === "••••••") {
+        valorEl.textContent = valorEl.dataset.valor;
+        icone.textContent = "🙈"; // ícone fechado
+      } else {
+        valorEl.textContent = "••••••";
+        icone.textContent = "👁"; // ícone aberto
+      }
+    }
 
     const meses = {{ meses|safe }};
     const valores = {{ valores|safe }};
@@ -224,6 +276,48 @@
                 y: {
                     beginAtZero: true
                 }
+            }
+        }
+    });
+    const mesesPecas = {{ meses_pecas|safe }};
+    const valoresPecas = {{ valores_pecas|safe }};
+
+    const ctxPecas = document.getElementById('graficoMensalPecas').getContext('2d');
+
+    new Chart(ctxPecas, {
+        type: 'bar',
+        data: {
+            labels: mesesPecas,
+            datasets: [{
+                label: 'Peças R$',
+                data: valoresPecas,
+                borderWidth: 1
+            }]
+        },
+        plugins: [ChartDataLabels],
+        options: {
+            responsive: true,
+            layout: {
+                padding: { top: 30 }
+            },
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: function(value) {
+                        return 'R$ ' + value.toLocaleString('pt-BR', {
+                            minimumFractionDigits: 2
+                        });
+                    },
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    }
+                }
+            },
+            scales: {
+                y: { beginAtZero: true }
             }
         }
     });
